@@ -109,16 +109,16 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
                 ux = (int)(ball1.mag*Math.cos(ball1.angle));
                 uy = (int)(-4.9*seconds*seconds+ball1.mag*Math.sin(ball1.angle)*seconds+75);
                 if(coorY1 >= 0 && coorY1 <= 670 && coorX1 <= 1500){
-                    coorX1 += ux;
+                    allX[4] += ux;
                     coorY1 = (650-uy);
                     for(int i = 0 ;i <6;i++){
                         if(i == 4){
                             continue;
                         }
-                        allX[i]-=10;
+                        allX[i]-=100;
                     }
                     
-                    if(ball2.shoot(coorX1, coorY1, allX[1], oriY2) == true){
+                    if(ball2.shoot(allX[4], coorY1, allX[1], oriY2) == true){
                         int hp = ball2.getHealth();
                         System.out.println("P1 shoot! P2 = "+ball2.getHealth());
                         if(hp <= 0){
@@ -131,16 +131,16 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
                 ux = (int)(ball2.mag*Math.cos(ball2.angle));
                 uy = (int)(-4.9*seconds*seconds+ball2.mag*Math.sin(ball2.angle)*seconds+75);
                 if(coorY2 >= 0 && coorY2 <= 670 && coorX2 <= 1500){
-                    coorX2 -= ux;
+                    allX[5] -= ux;
                     coorY2 = (650-uy);
                     for(int i = 0 ;i <6;i++){
                         if(i == 5){
                             continue;
                         }
-                        allX[i]+=10;
+                        allX[i]+=100;
                     }
                     
-                    if(ball1.shoot(coorX2, coorY2, allX[0], oriY1) == true){
+                    if(ball1.shoot(allX[5], coorY2, allX[0], oriY1) == true){
                         int hp = ball1.getHealth();
                         System.out.println("P2 shoot! P1 = "+ball1.getHealth());
                         if(hp <= 0){
@@ -156,24 +156,28 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
             shooting = false;
             timer.stop();
             if(coorY1 >= 670 || coorY1 <= 0 || coorX1 >= 1500){
-                coorX1 = oriX1;
+                allX[4] = oriX1;
                 coorY1 = oriY1;
                 P1 = false;
                 P2 = true;
                 sumXRIGHT = allX[0]-P1X;
                 for(int i=0;i<6;i++){
+                    if(i==4)
+                        continue;
                     allX[i]-=sumXRIGHT;
                 }
                 sumXRIGHT=0;
                 sumXLEFT=0;
             }
             if(coorY2 >= 670 || coorY2 <= 0 || coorX2 >= 1500){
-                coorX2 = oriX2;
+                allX[5] = oriX2;
                 coorY2 = oriY2;
                 P2 = false;
                 P1 = true;
                 sumXLEFT = P1X - allX[0];
                 for(int i=0;i<6;i++){
+                    if(i==5)
+                        continue;
                     allX[i]+=sumXLEFT;
                 }
                 sumXRIGHT=0;
@@ -191,6 +195,8 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
         //ground
         g.setColor(new Color(152,251,152));
         g.fillRect(0, HEIGHT-120, WIDTH, 150);
+        g.setColor(Color.BLACK);
+        g.drawLine(0, HEIGHT-120, WIDTH, HEIGHT-120);
                 
 //        //rect1
 //        g.setColor(Color.LIGHT_GRAY);
@@ -202,14 +208,14 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
         
         //arrow 1
         g.setColor(Color.BLACK);
-        g.drawLine(coorX1-50, coorY1, coorX1, coorY1);
-        g.drawLine(coorX1-5,coorY1-10,coorX1, coorY1);
-        g.drawLine(coorX1-5,coorY1+10,coorX1, coorY1);
+        g.drawLine(allX[4]-50, coorY1, allX[4], coorY1);
+        g.drawLine(allX[4]-5,coorY1-10,allX[4], coorY1);
+        g.drawLine(allX[4]-5,coorY1+10,allX[4], coorY1);
         
         //arrow 2
-        g.drawLine(coorX2, coorY2, coorX2+50, coorY2);
-        g.drawLine(coorX2,coorY2,(int)((coorX2+5)*Math.cos(angle)), coorY2+10);
-        g.drawLine(coorX2,coorY2,(int)((coorX2+5)*Math.cos(angle)), coorY2-10);
+        g.drawLine(allX[5], coorY2, allX[5]+50, coorY2);
+        g.drawLine(allX[5],coorY2,allX[5]+5, coorY2+10);
+        g.drawLine(allX[5],coorY2,allX[5]+5, coorY2-10);
         
         //Player 1
         g.fillOval(allX[0], P1Y, 50, 50);
@@ -217,7 +223,7 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
         g.fillRect(allX[0]+10, P1Y+120, 30, 2);         //connect
         g.drawArc(allX[0]+30, P1Y+50, 30, 50, 0, 90);   //bow
         g.drawArc(allX[0]+30, P1Y+50, 30, 50, 0, -90);  //bow
-        g.fillRect(allX[0]+25, oriY1, oriX1-allX[0]-70, 2); //hand
+        g.fillRect(allX[0]+25, oriY1, 20, 2); //hand
         g.fillRect(allX[0]+10, P1Y+120, 2, 60);         //right leg
         g.fillRect(allX[0]+40, P1Y+120, 2, 60);         //left leg
         
@@ -226,7 +232,7 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
         g.fillRect(allX[1]+25, P2Y+50, 2, 70);          //body
         g.fillRect(allX[1]+10, P2Y+120, 30, 2);         //connect
         g.drawArc(allX[1]-10, P2Y+50, 30, 50, 90, 180); //bow
-        g.fillRect(allX[1]+25, oriY2, (oriX2-allX[1])/2, 2);//hand
+        g.fillRect(allX[1], oriY2, 25, 2);//hand
         g.fillRect(allX[1]+10, P2Y+120, 2, 60);         //right leg
         g.fillRect(allX[1]+40, P2Y+120, 2, 60);         //left leg
         
@@ -380,10 +386,8 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
         if(temp.x>=0 && temp.x<=WIDTH && temp.y>=0 && temp.y <= HEIGHT){
             if(P1 == true){
                 getAngle(temp); getMag(temp);
-                System.out.println(ball1.angle+" "+ball1.mag);
             }else if(P2 == true){
                 getAngle(temp); getMag(temp);
-                System.out.println(ball2.angle+" "+ball2.mag);
             }
         }
         renderer.repaint();

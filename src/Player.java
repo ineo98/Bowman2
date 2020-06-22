@@ -28,8 +28,9 @@ public class Player {
     }
     
     public boolean shoot(int xco, int yco, int playerX, int playerY){
-        Rectangle rect = new Rectangle(playerX, playerY, 50, 185);
-        Rectangle temp = new Rectangle(xco, yco, 20, 10);
+        yco += 105;
+        Rectangle rect = new Rectangle(playerX, playerY, 80, 170);
+        Rectangle temp = new Rectangle(xco, yco, 20, 20);
         int leftX = Math.max(rect.x, temp.x);
         int rightX = (int) Math.min(rect.getMaxX(), temp.getMaxX());
         int topY = Math.max(rect.y,temp.y);
