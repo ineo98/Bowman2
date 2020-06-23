@@ -3,11 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -15,6 +18,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -187,7 +192,8 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
 	renderer.repaint();
     }
 
-    public void repaint(Graphics g){
+    public void repaint(Graphics gr){
+        Graphics2D g = (Graphics2D) gr;
         //sky
         g.setColor(new Color(240, 255, 255));
         g.fillRect(0, 0, WIDTH, HEIGHT);
@@ -205,9 +211,37 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
 //        //rect2
 //        g.setColor(Color.DARK_GRAY);
 //        g.fillRect(coorX2, coorY2, ball2.width, ball2.height);
+
         
+        //Player 1
+        g.fillOval(allX[0], P1Y, 50, 50);
+        g.setStroke(new BasicStroke(2));
+        g.fillRect(allX[0]+25, P1Y+50, 2, 70);          //body
+        g.fillRect(allX[0]+25, oriY1, 20, 2);           //hand
+        g.drawLine(allX[0]+25, P1Y+120, allX[0], P1Y+180);
+        g.drawLine(allX[0]+25, P1Y+120, allX[0]+50, P1Y+180);
+        g.drawArc(allX[0]+30, P1Y+50, 30, 50, 0, 90);   //bow
+        g.drawArc(allX[0]+30, P1Y+50, 30, 50, 0, -90);  //bow
+        
+        //Player 2
+        g.fillOval(allX[1], P2Y, 50, 50);
+        g.fillRect(allX[1]+25, P2Y+50, 2, 70);          //body
+        g.drawLine(allX[1]+25, P2Y+120, allX[1], P2Y+180);
+        g.drawLine(allX[1]+25, P2Y+120, allX[1]+50, P2Y+180);
+        g.drawArc(allX[1]-10, P2Y+50, 30, 50, 90, 180); //bow
+        g.fillRect(allX[1], oriY2, 25, 2);//hand
+              
         //arrow 1
         g.setColor(Color.BLACK);
+//        Line2D line11 = new Line2D.Double(allX[4]-50,coorY1,allX[4],coorY1);
+//        Line2D line12 = new Line2D.Double(allX[4]-5,coorY1-10,allX[4], coorY1);
+//        Line2D line13 = new Line2D.Double(allX[4]-5,coorY1+10,allX[4], coorY1);
+//        AffineTransform at11 = AffineTransform.getRotateInstance( ball1.getAngle()-Math.PI/2, line11.getX1(), line11.getY1());
+//        AffineTransform at12 = AffineTransform.getRotateInstance( ball1.getAngle(), line12.getX1(), line13.getY1());
+//        AffineTransform at13 = AffineTransform.getRotateInstance( ball1.getAngle(), line13.getX1(), line13.getY1());
+//        g.draw(at11.createTransformedShape(line11));
+//        g.draw(at12.createTransformedShape(line12));
+//        g.draw(at13.createTransformedShape(line13));
         g.drawLine(allX[4]-50, coorY1, allX[4], coorY1);
         g.drawLine(allX[4]-5,coorY1-10,allX[4], coorY1);
         g.drawLine(allX[4]-5,coorY1+10,allX[4], coorY1);
@@ -216,25 +250,6 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
         g.drawLine(allX[5], coorY2, allX[5]+50, coorY2);
         g.drawLine(allX[5],coorY2,allX[5]+5, coorY2+10);
         g.drawLine(allX[5],coorY2,allX[5]+5, coorY2-10);
-        
-        //Player 1
-        g.fillOval(allX[0], P1Y, 50, 50);
-        g.fillRect(allX[0]+25, P1Y+50, 2, 70);          //body
-        g.fillRect(allX[0]+10, P1Y+120, 30, 2);         //connect
-        g.drawArc(allX[0]+30, P1Y+50, 30, 50, 0, 90);   //bow
-        g.drawArc(allX[0]+30, P1Y+50, 30, 50, 0, -90);  //bow
-        g.fillRect(allX[0]+25, oriY1, 20, 2); //hand
-        g.fillRect(allX[0]+10, P1Y+120, 2, 60);         //right leg
-        g.fillRect(allX[0]+40, P1Y+120, 2, 60);         //left leg
-        
-        //Player 2
-        g.fillOval(allX[1], P2Y, 50, 50);
-        g.fillRect(allX[1]+25, P2Y+50, 2, 70);          //body
-        g.fillRect(allX[1]+10, P2Y+120, 30, 2);         //connect
-        g.drawArc(allX[1]-10, P2Y+50, 30, 50, 90, 180); //bow
-        g.fillRect(allX[1], oriY2, 25, 2);//hand
-        g.fillRect(allX[1]+10, P2Y+120, 2, 60);         //right leg
-        g.fillRect(allX[1]+40, P2Y+120, 2, 60);         //left leg
         
         g.setColor(Color.GRAY);
 	g.setFont(new Font("Arial", 1, 100));
