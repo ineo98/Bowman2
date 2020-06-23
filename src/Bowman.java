@@ -104,9 +104,15 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
     public int ux, uy;
     public int sumXRIGHT = 0;    //p1 shoot move to right
     public int sumXLEFT = 0;   //p2 shoot move to left
+    public boolean intersect1;
+    public boolean intersect2;
+    public int yEmergence1 = 0;
+    public int yEmergence2 = 0;
     @Override
     public void actionPerformed(ActionEvent e){
         seconds++;
+        intersect1 = false;
+        intersect2 = false;
         if (started){
             if(P1 == true){
                 if(ball1.mag>=110)
@@ -125,6 +131,7 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
                     
                     if(ball2.shoot(allX[4], coorY1, allX[1], oriY2) == true){
                         int hp = ball2.getHealth();
+                        intersect1 = true;
                         System.out.println("P1 shoot! P2 = "+ball2.getHealth());
                         if(hp <= 0){
                             started = false;
@@ -147,6 +154,7 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
                     
                     if(ball1.shoot(allX[5], coorY2, allX[0], oriY1) == true){
                         int hp = ball1.getHealth();
+                        intersect2 = true;
                         System.out.println("P2 shoot! P1 = "+ball1.getHealth());
                         if(hp <= 0){
                             started = false;
@@ -157,10 +165,12 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
             }
             
         }
-        if(coorY1 >= 670 || coorY2 >= 670 || coorX1 >= 1500 || coorX2 >= 1500 || coorY1 <= 0 || coorY2 <= 0){
+        if(coorY1 >= 670 || coorY2 >= 670 || coorX1 >= 1500 || coorX2 >= 1500 || coorY1 <= 0 || coorY2 <= 0 || intersect1 == true || intersect2 == true){
             shooting = false;
             timer.stop();
-            if(coorY1 >= 670 || coorY1 <= 0 || coorX1 >= 1500){
+            if(coorY1 >= 670 || coorY1 <= 0 || coorX1 >= 1500 || intersect1 == true){
+                yEmergence1 = coorY1;
+                allX[2] = allX[4];
                 allX[4] = oriX1;
                 coorY1 = oriY1;
                 P1 = false;
@@ -174,7 +184,9 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
                 sumXRIGHT=0;
                 sumXLEFT=0;
             }
-            if(coorY2 >= 670 || coorY2 <= 0 || coorX2 >= 1500){
+            if(coorY2 >= 670 || coorY2 <= 0 || coorX2 >= 1500 || intersect2 == true){
+                yEmergence2 = coorY2;
+                allX[3] = allX[5];
                 allX[5] = oriX2;
                 coorY2 = oriY2;
                 P2 = false;
@@ -192,26 +204,19 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
 	renderer.repaint();
     }
 
+    public int counter1 = 0;
+    public int counter2 = 0;
     public void repaint(Graphics gr){
         Graphics2D g = (Graphics2D) gr;
         //sky
-        g.setColor(new Color(240, 255, 255));
+        g.setColor(new Color(255, 255, 255));
         g.fillRect(0, 0, WIDTH, HEIGHT);
         
         //ground
-        g.setColor(new Color(152,251,152));
+        g.setColor(new Color(255,255,255));
         g.fillRect(0, HEIGHT-120, WIDTH, 150);
         g.setColor(Color.BLACK);
         g.drawLine(0, HEIGHT-120, WIDTH, HEIGHT-120);
-                
-//        //rect1
-//        g.setColor(Color.LIGHT_GRAY);
-//        g.fillRect(coorX1, coorY1, ball1.width, ball1.height);
-//        
-//        //rect2
-//        g.setColor(Color.DARK_GRAY);
-//        g.fillRect(coorX2, coorY2, ball2.width, ball2.height);
-
         
         //Player 1
         g.fillOval(allX[0], P1Y, 50, 50);
@@ -222,6 +227,8 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
         g.drawLine(allX[0]+25, P1Y+120, allX[0]+50, P1Y+180);
         g.drawArc(allX[0]+30, P1Y+50, 30, 50, 0, 90);   //bow
         g.drawArc(allX[0]+30, P1Y+50, 30, 50, 0, -90);  //bow
+        g.drawLine(allX[0]+50, P1Y+50, (int)((allX[0]+50)-(0.1*ball1.getMag())), P1Y+75);
+        g.drawLine(allX[0]+50, P1Y+100,(int)((allX[0]+50)-(0.1*ball1.getMag())), P1Y+75);
         
         //Player 2
         g.fillOval(allX[1], P2Y, 50, 50);
@@ -230,18 +237,12 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
         g.drawLine(allX[1]+25, P2Y+120, allX[1]+50, P2Y+180);
         g.drawArc(allX[1]-10, P2Y+50, 30, 50, 90, 180); //bow
         g.fillRect(allX[1], oriY2, 25, 2);//hand
+        g.drawLine(allX[1]+3, P2Y+50, (int)((allX[1]+3)+(0.1*ball2.getMag())), P2Y+75);
+        g.drawLine(allX[1]+3, P2Y+100,(int)((allX[1]+3)+(0.1*ball2.getMag())), P2Y+75);
+        
               
         //arrow 1
         g.setColor(Color.BLACK);
-//        Line2D line11 = new Line2D.Double(allX[4]-50,coorY1,allX[4],coorY1);
-//        Line2D line12 = new Line2D.Double(allX[4]-5,coorY1-10,allX[4], coorY1);
-//        Line2D line13 = new Line2D.Double(allX[4]-5,coorY1+10,allX[4], coorY1);
-//        AffineTransform at11 = AffineTransform.getRotateInstance( ball1.getAngle()-Math.PI/2, line11.getX1(), line11.getY1());
-//        AffineTransform at12 = AffineTransform.getRotateInstance( ball1.getAngle(), line12.getX1(), line13.getY1());
-//        AffineTransform at13 = AffineTransform.getRotateInstance( ball1.getAngle(), line13.getX1(), line13.getY1());
-//        g.draw(at11.createTransformedShape(line11));
-//        g.draw(at12.createTransformedShape(line12));
-//        g.draw(at13.createTransformedShape(line13));
         g.drawLine(allX[4]-50, coorY1, allX[4], coorY1);
         g.drawLine(allX[4]-5,coorY1-10,allX[4], coorY1);
         g.drawLine(allX[4]-5,coorY1+10,allX[4], coorY1);
@@ -253,8 +254,38 @@ public class Bowman implements ActionListener, MouseListener, KeyListener, Mouse
         
         g.setColor(Color.GRAY);
 	g.setFont(new Font("Arial", 1, 100));
-
+        
+        if(allX[2]!=0){
+            int yTemp = 670;
+            counter1+=1;
+            if(intersect1 == true || counter2<=2)
+                yTemp = yEmergence1;
+            if(counter1 == 2)
+                counter1 = 0;
+            g.setColor(Color.GREEN);
+            g.drawLine(allX[2]-50, yTemp, allX[2], yTemp);
+            g.drawLine(allX[2]-5, yTemp-10, allX[2], yTemp);
+            g.drawLine(allX[2]-5, yTemp+10, allX[2], yTemp);
+            g.setColor(Color.BLACK);
+        }
+        if(allX[3]!=0){
+            int yTemp = 670;
+            counter2+=1;
+            if(intersect2 == true || counter2 <= 2)
+                yTemp = yEmergence2;
+            if(counter2 == 2)
+                counter2 = 0;
+            g.setColor(Color.GREEN);
+            g.drawLine(allX[3], yTemp, allX[3]+50, yTemp);
+            g.drawLine(allX[3], yTemp, allX[3]+5, yTemp+10);
+            g.drawLine(allX[3], yTemp, allX[3]+5, yTemp-10);
+            g.setColor(Color.BLACK);
+        }
+        
 	if (!started && !gameOver){
+            g.setColor(new Color(.2f,.8f,.8f,.2f));
+            g.fillRect(0, 0, 1500, 800);
+            g.setColor(Color.DARK_GRAY);
             g.drawString("Click to start!", 375, HEIGHT / 2 - 50);
 	}
 

@@ -25,11 +25,13 @@ public class Player {
         this.Ycoor = ycoor;
         this.PX = PX;
         this.PY = PY;
+        this.mag=0;
+        this.angle=0;
     }
     
     public boolean shoot(int xco, int yco, int playerX, int playerY){
         yco += 105;
-        Rectangle rect = new Rectangle(playerX, playerY, 80, 170);
+        Rectangle rect = new Rectangle(playerX, playerY, 80, 150);
         Rectangle temp = new Rectangle(xco, yco, 20, 20);
         int leftX = Math.max(rect.x, temp.x);
         int rightX = (int) Math.min(rect.getMaxX(), temp.getMaxX());
